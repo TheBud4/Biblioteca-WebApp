@@ -1,0 +1,77 @@
+@using Biblioteca.DataBase.Services
+@using Biblioteca.Models
+@inject IUserService UserService
+<div class="gerenciador">
+    <h3>Gerenciar Usuarios</h3>
+    <div class="box">
+        <input type="text" placeholder="Pesquisar..." />
+        <button class="btn btn-primary">Pesquisar</button>
+
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                @SelectedTipoUsuario
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                @foreach (var tipoUsuario in TipoUsuarios)
+                {
+                <li>
+                    <a class="dropdown-item" @onclick="() => SelectedTipoUsuario = tipoUsuario">
+                        @tipoUsuario
+                    </a>
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="db-list">
+        @if (_usuarios == null) {
+            <p>Carregando funcionários...</p>
+        }
+        else if (_usuarios.Count == 0) {
+            <p>Nenhum funcionário encontrado.</p>
+        }
+        else {
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var funcionario in _usuarios) {
+                    <tr>
+                        <td>@funcionario.Id</td>
+                        <td>@funcionario.Nome</td>
+                        @* <td>@funcionario.Cargo</td> *@
+                        <td>@funcionario.Senha</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+        <button class="cadastrar-button btn btn-primary" @onclick="ShowThis">Cadastrar Usuario</button>
+</div>
+
+<CadastrarUsuario @ref="CadUsuComponent"/>
+
+@code {
+    private List<Usuario>? _usuarios;
+    private CadastrarUsuario? CadUsuComponent { get; set; }
+
+    private TipoUsuario SelectedTipoUsuario { get; set; } = TipoUsuario.Funcionario;
+    private List<TipoUsuario> TipoUsuarios { get; set; } = Enum.GetValues(typeof(TipoUsuario)).Cast<TipoUsuario>().ToList();
+
+    
+    private void ShowThis() {
+        CadUsuComponent?.Show();
+    }
+    
+    protected override async Task OnInitializedAsync() {
+        _usuarios = await UserService.GetUsers(SelectedTipoUsuario);
+    }
+
+}

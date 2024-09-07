@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>Biblioteca-WebApp</RootNamespace>
+        <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Components\App.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Layout\CadastrarFuncionario.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Layout\GerenciarCliente.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Layout\GerenciarFuncionario.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Layout\MainLayout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Layout\NavMenu.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Layout\None.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Pages\Catalogo.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Pages\Emprestimos.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Pages\Gerenciar.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Pages\Login.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Pages\PainelDeControle.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\Routes.razor" />
+      <_ContentIncludedByDefault Remove="Components\Components\_Imports.razor" />
+    </ItemGroup>
+
+</Project>

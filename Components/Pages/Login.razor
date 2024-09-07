@@ -1,0 +1,40 @@
+@using Biblioteca_WebApp.Components.Layout
+@using Biblioteca.DataBase.Services
+@using Biblioteca.Models
+@layout None
+@page "/biblioteca/login"
+@inject NavigationManager Navigation
+@inject IUserService UserService
+
+<EditForm Model="@Usuario" FormName="login-form" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="form-fields">
+        <label for="username">Username:</label>
+        <InputText id="username" @bind-Value="Usuario.Nome"/>
+    </div>
+    <div class="form-fields">
+        <label for="password">Password:</label>
+        <InputText id="password" type="password" @bind-Value="Usuario.Senha"/>
+    </div>
+    <button type="submit">Login</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private Usuario Usuario { get; set; } = new();
+
+    private async Task HandleLogin() {
+        var success = await UserService.Login(Usuario.Nome, Usuario.Senha);
+        
+        if (success) {
+            Navigation.NavigateTo("/Painel-de-controle");
+        }
+        else {
+            Console.WriteLine("Login failed");
+        }
+    }
+
+
+}

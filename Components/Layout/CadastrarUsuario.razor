@@ -1,0 +1,32 @@
+@using Biblioteca.DataBase.Services
+@using Biblioteca.Models
+@inject IUserService UserService
+
+<div class="@(IsVisible ? "visible" : "hidden")">
+    <h3>Cadastrar Funcionario</h3>
+    @* <EditForm> *@
+    @*     <DataAnnotationsValidator /> *@
+    @*     <ValidationSummary /> *@
+    @*     <div class="form-group"> *@
+    @*         <label for="nome">Nome</label> *@
+    @*     <InputText id="nome" class="form-control" @bind-Value="_funcionario.Nome" /> *@
+    @*     </div> *@
+    @* </EditForm> *@
+    <button @onclick="Hide">Fechar</button>
+</div>
+
+@code {
+    private Funcionario? _funcionario;
+    
+    public bool IsVisible { get; private set; }
+    
+    public void Show() {
+        IsVisible = true;
+        StateHasChanged();
+    }
+    
+    public void Hide() {
+        IsVisible = false;
+        StateHasChanged();
+    }
+}

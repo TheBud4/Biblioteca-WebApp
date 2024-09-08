@@ -1,0 +1,109 @@
+@using Biblioteca.DataBase.Services
+@using Biblioteca.Models
+@using Microsoft.AspNetCore.Components
+@inject IUserService UserService
+
+<EditForm Model="@Cliente" class="custom-form" FormName="login-form" OnValidSubmit="HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="row">
+        <div class="col form-group">
+            <label for="nome">Nome</label>
+            <InputText id="nome" class="form-control" @bind-Value="Cliente.Nome" />
+        </div>
+        <div class="col form-group">
+            <label for="nome">Email</label>
+            <InputText id="nome" class="form-control" @bind-Value="Cliente.Email" />
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <label for="nome">Senha</label>
+        <InputText id="nome" type="password" class="form-control" @bind-Value="Cliente.Senha" />
+    </div>
+    <div class="row mt-3">
+        <div class="col form-group">
+            <label for="nome">CEP</label>
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.CEP" />
+        </div>
+        <div class="col form-group">
+            <label for="nome">Bairro</label>
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Bairro" />
+        </div>
+        <div class="col form-group">
+            <label for="nome">Rua</label>
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Rua" />
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col form-group">
+            <label for="nome">Numero</label>
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Numero" />
+        </div>
+        <div class="col form-group">
+            <label for="nome">Complemento</label>
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Complemento" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Cadastrar</button>
+</EditForm>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            @if (IsSuccessfull)
+            {
+                <span class='bi bi-check-circle-fill me-2 text-success'></span>
+            }
+            else
+            {
+                <span class='bi bi-x-circle-fill me-2 text-danger'> </span>
+            }
+
+            <strong class="me-auto">Biblioteca</strong>
+            <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            @(IsSuccessfull ? "Cliente Cadastrado com sucesso!" :
+                "Erro ao cadastrar Cliente!")
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    private Cliente? Cliente { get; set; } = new();
+    private Endereco? Endereco { get; set; } = new();
+
+    public bool Toast { get; private set; }
+    public bool IsSuccessfull { get; private set; }
+
+    private async Task HandleRegister()
+    {
+        var success = await UserService.RegisterCliente(Cliente, Endereco);
+
+        if (success)
+        {
+            IsSuccessfull = true;
+            ShowToast();
+
+        }
+        else
+        {
+            IsSuccessfull = false;
+            ShowToast();
+        }
+    }
+    private void ShowToast()
+    {
+        Toast = true;
+        StateHasChanged();
+    }
+
+    private void HideToast()
+    {
+        Toast = false;
+        StateHasChanged();
+    }
+
+}

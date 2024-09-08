@@ -1,0 +1,317 @@
+@using Biblioteca.DataBase.Services
+@using Biblioteca.Models
+@inject IUserService UserService
+
+<div class="mb-5">
+    <div class="row">
+        <div class="col-10 text-center mb-4">
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text text-center text-black" id="addon-wrapping">
+                    <span class="bi bi-search"></span>
+                </span>
+                <input type="search" class="form-control" @bind="SearchTerm" placeholder="Pesquise aqui..."
+                    @oninput="OnSearchChanged">
+                <button class="btn btn-primary" @onclick="Search">Pesquisar</button>
+            </div>
+        </div>
+        <div class="dropdown col-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                @SelectedTipoUsuario
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                @foreach (var tipoUsuario in TipoUsuarios)
+                {
+                    <li>
+                        <a class="dropdown-item" @onclick="() => ChangeTipoUsuario(tipoUsuario)">
+                            @tipoUsuario
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="body">
+        @if (SelectedTipoUsuario == TipoUsuario.Funcionario)
+        {
+            <div class="funcionarios">
+                @if (_funcionarios == null)
+                {
+                    <p>Carregando Funcionários...</p>
+                }
+                else if (_funcionarios.Count == 0)
+                {
+                    <p>Nenhum Funcionário encontrado.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Data de Entrada</th>
+                                <th>Salário</th>
+                                <th>Tipo Usuário</th>
+                                <th>Endereço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var funcionario in _funcionarios)
+                            {
+                                <tr>
+                                    <td>@funcionario.Id</td>
+                                    <td>@funcionario.Nome</td>
+                                    <td>@funcionario.Email</td>
+                                    <td>@funcionario.DataEntrada</td>
+                                    <td>@funcionario.Salario</td>
+                                    <td>@funcionario.TipoUsuario</td>
+                                    <td>@funcionario.Endereco?.Rua, @funcionario.Endereco?.Numero
+                                        , @funcionario.Endereco?.Bairro, @funcionario.Endereco?.CEP
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"
+                                            @onclick="() => EditUser(funcionario.Id)">Editar</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+        else if (SelectedTipoUsuario == TipoUsuario.Cliente)
+        {
+            <div class="clientes">
+                @if (_clientes == null)
+                {
+                    <p>Carregando Clientes...</p>
+                }
+                else if (_clientes.Count == 0)
+                {
+                    <p>Nenhum Cliente encontrado.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Data de Entrada</th>
+                                <th>Tipo Usuário</th>
+                                <th>Endereço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cliente in _clientes)
+                            {
+                                <tr>
+                                    <td>@cliente.Id</td>
+                                    <td>@cliente.Nome</td>
+                                    <td>@cliente.Email</td>
+                                    <td>@cliente.DataEntrada</td>
+                                    <td>@cliente.TipoUsuario</td>
+                                    <td>@cliente.Endereco?.Rua, @cliente.Endereco?.Numero
+                                        , @cliente.Endereco?.Bairro, @cliente.Endereco?.CEP
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" @onclick="() => EditUser(cliente.Id)">Editar</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="todos">
+                @if (_usuarios == null)
+                {
+                    <p>Carregando Todos...</p>
+                }
+                else if (_usuarios.Count == 0)
+                {
+                    <p>Nenhum Usuário encontrado.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Data de Entrada</th>
+                                <th>Tipo Usuário</th>
+                                <th>Endereço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var usuario in _usuarios)
+                            {
+                                <tr>
+                                    <td>@usuario.Id</td>
+                                    <td>@usuario.Nome</td>
+                                    <td>@usuario.Email</td>
+                                    <td>@usuario.DataEntrada</td>
+                                    <td>@usuario.TipoUsuario</td>
+                                    <td>@usuario.Endereco?.Rua, @usuario.Endereco?.Numero
+                                        ,@usuario.Endereco?.Bairro, @usuario.Endereco?.CEP
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" @onclick="() => EditUser(usuario.Id)">Editar</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+
+
+
+            <span class='bi bi-x-circle-fill me-2 text-danger'> </span>
+
+
+            <strong class="me-auto">Biblioteca</strong>
+            <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Erro ao cadastrar Cliente!
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Funcionario>? _funcionarios;
+    private List<Cliente>? _clientes;
+    private List<Usuario>? _usuarios;
+    private Usuario? _usuarioParaEdicao;
+
+    public bool Toast { get; private set; }
+
+    private TipoUsuario SelectedTipoUsuario { get; set; } = TipoUsuario.Funcionario;
+    private List<TipoUsuario> TipoUsuarios { get; set; } = Enum.GetValues(typeof(TipoUsuario)).Cast<TipoUsuario>().ToList();
+    private string SearchTerm { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsuarios();
+    }
+
+    private async Task LoadUsuarios()
+    {
+        if (SelectedTipoUsuario == TipoUsuario.Cliente)
+        {
+            _clientes = await UserService.GetClientes(SearchTerm);
+            _funcionarios = null;
+            _usuarios = null;
+        }
+        else if (SelectedTipoUsuario == TipoUsuario.Funcionario)
+        {
+            _funcionarios = await UserService.GetFuncionarios(SearchTerm);
+            _clientes = null;
+            _usuarios = null;
+        }
+        else
+        {
+            _usuarios = await UserService.GetUsers(SearchTerm);
+        }
+    }
+
+    private async Task ChangeTipoUsuario(TipoUsuario tipoUsuario)
+    {
+        SelectedTipoUsuario = tipoUsuario;
+        await LoadUsuarios();
+    }
+
+    private async Task Search()
+    {
+        await LoadUsuarios();
+    }
+
+    private async Task OnSearchChanged(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value.ToString();
+        await LoadUsuarios();
+    }
+
+    private void ShowToast()
+    {
+        Toast = true;
+        StateHasChanged();
+    }
+
+    private void HideToast()
+    {
+        Toast = false;
+        StateHasChanged();
+    }
+
+
+    private void EditUser(Guid id)
+    {
+        if (SelectedTipoUsuario == TipoUsuario.Funcionario)
+        {
+            var funcionario = _funcionarios?.FirstOrDefault(f => f.Id == id);
+            if (funcionario != null)
+            {
+                _usuarioParaEdicao = funcionario as Usuario;
+                Console.WriteLine("Funcionário para edição: " + _usuarioParaEdicao);
+                // Navegar para a página de edição ou abrir um modal
+                //NavigationManager.NavigateTo($"/edit-funcionario/{id}");
+            }
+            else
+            {
+                ShowToast();
+            }
+        }
+        else if (SelectedTipoUsuario == TipoUsuario.Cliente)
+        {
+            var cliente = _clientes?.FirstOrDefault(c => c.Id == id);
+            if (cliente != null)
+            {
+                _usuarioParaEdicao = cliente as Usuario;
+                Console.WriteLine("Cliente para edição: " + _usuarioParaEdicao);
+                // Navegar para a página de edição ou abrir um modal
+                //NavigationManager.NavigateTo($"/edit-cliente/{id}");
+            }
+            else
+            {
+                ShowToast();
+            }
+        }
+        else
+        {
+            var usuario = _usuarios?.FirstOrDefault(u => u.Id == id);
+            if (usuario != null)
+            {
+                _usuarioParaEdicao = usuario;
+                Console.WriteLine("Usuário para edição: " + _usuarioParaEdicao);
+                // Navegar para a página de edição ou abrir um modal
+                //NavigationManager.NavigateTo($"/edit-usuario/{id}");
+            }
+            else
+            {
+                ShowToast();
+            }
+        }
+    }
+
+}

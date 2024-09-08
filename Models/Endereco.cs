@@ -10,6 +10,5 @@ public class Endereco {
     public string CEP { get; set; }
     public string Complemento { get; set; }
     
-    public Guid UsuarioId { get; set; }
-    public Usuario Usuario { get; set; }
+    public List<Usuario> Usuario { get; set; }
 }

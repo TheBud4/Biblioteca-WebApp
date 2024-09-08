@@ -5,24 +5,26 @@
 @page "/biblioteca/login"
 @inject NavigationManager Navigation
 @inject IUserService UserService
+<div class="container">
+    <h1>Login</h1>
+    <EditForm Model="@Usuario" class="custom-form" FormName="login-form" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
 
-<EditForm Model="@Usuario" FormName="login-form" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
-
-    <div class="form-fields">
-        <label for="username">Username:</label>
-        <InputText id="username" @bind-Value="Usuario.Nome"/>
-    </div>
-    <div class="form-fields">
-        <label for="password">Password:</label>
-        <InputText id="password" type="password" @bind-Value="Usuario.Senha"/>
-    </div>
-    <button type="submit">Login</button>
-</EditForm>
-
+        <div class="form-fields">
+            <label for="username">Username:</label>
+            <InputText id="username" @bind-Value="Usuario.Nome"/>
+        </div>
+        <div class="form-fields">
+            <label for="password">Password:</label>
+            <InputText id="password" type="password" @bind-Value="Usuario.Senha"/>
+        </div>
+        <button class="btn btn-primary w-25 fs-5" type="submit">Login</button>
+    </EditForm>
+</div>
 @code {
     [SupplyParameterFromForm]
+    
     private Usuario Usuario { get; set; } = new();
 
     private async Task HandleLogin() {

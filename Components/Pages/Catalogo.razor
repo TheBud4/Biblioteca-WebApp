@@ -16,54 +16,57 @@
                     <span class="bi bi-search"></span>
                 </span>
                 <input type="search" class="form-control" @bind="SearchTerm" placeholder="Pesquise aqui..."
-                       @oninput="OnSearchChanged">
+                    @oninput="OnSearchChanged">
                 <button class="btn btn-primary" @onclick="Search">Pesquisar</button>
             </div>
         </div>
     </div>
 
     <div class="body">
-                @if (_livros == null) {
-                    <p>Carregando Livros...</p>
-                }
-                else if (_livros.Count == 0) {
-                    <p>Nenhum Livro encontrado.</p>
-                }
-                else {
-                    <table class="table">
-                        <thead>
+        @if (_livros == null)
+        {
+            <p>Carregando Livros...</p>
+        }
+        else if (_livros.Count == 0)
+        {
+            <p>Nenhum Livro encontrado.</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Titulo</th>
+                        <th>Data de Publicacao</th>
+                        <th>Autor</th>
+                        <th>Categoria</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var livro in _livros)
+                    {
                         <tr>
-                            <th>Id</th>
-                            <th>Titulo</th>
-                            <th>Data de Publicacao</th>
-                            <th>Autor</th>
-                            <th>Categoria</th>
-                            <th>Ações</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var livro in _livros) {
-                            <tr>
-                                <td>@livro.Id</td>
-                                <td>@livro.Titulo</td>
+                            <td>@livro.Id</td>
+                            <td>@livro.Titulo</td>
                             <td>@livro.PublishedDate.ToString("yyyy-MM-dd")</td>
-                                <td>
-                                    @livro.Autor?.Nome
-                                </td>
-                                <td>@livro.Categoria?.Nome</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm"
-                                            @onclick="() => EditLivro(livro.Id)">
-                                        Editar
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                }
-            </div>
+                            <td>
+                                @livro.Autor?.Nome
+                            </td>
+                            <td>@livro.Categoria?.Nome</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" @onclick="() => EditLivro(livro.Id)">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
     </div>
+</div>
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
@@ -80,12 +83,12 @@
 <button class="cadastrar-button btn btn-primary" @onclick="Show">Cadastrar
     Livros</button>
 <EditLivro LivroParaEdicao="_livroParaEdicao" IsVisible="@_isModalVisible"
-                 IsVisibleChanged="OnModalVisibilityChanged"/>
+    IsVisibleChanged="OnModalVisibilityChanged" />
 
 
 
 <div class="@(IsCreateVisible ? "visible" : "hidden")">
-    <CadastrarLivro/>
+    <CadastrarLivro />
     <button @onclick="Hide" class="btn btn-outline-danger mt-4">Fechar</button>
 </div>
 @code {
@@ -98,42 +101,52 @@
     public bool Toast { get; private set; }
     private string? SearchTerm { get; set; } = string.Empty;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
         await LoadUsuarios();
     }
 
-    private async Task LoadUsuarios() {
-            _livros = await BookService.GetBooks(SearchTerm);
+    private async Task LoadUsuarios()
+    {
+        _livros = await BookService.GetBooks(SearchTerm);
     }
-    private async Task Search() {
+    private async Task Search()
+    {
         await LoadUsuarios();
     }
 
-    private async Task OnSearchChanged(ChangeEventArgs e) {
+    private async Task OnSearchChanged(ChangeEventArgs e)
+    {
         SearchTerm = e.Value?.ToString();
         await LoadUsuarios();
     }
 
-    private void ShowToast() {
+    private void ShowToast()
+    {
         Toast = true;
         StateHasChanged();
     }
 
-    private void HideToast() {
+    private void HideToast()
+    {
         Toast = false;
         StateHasChanged();
     }
 
-    private void OnModalVisibilityChanged(bool isVisible) {
+    private void OnModalVisibilityChanged(bool isVisible)
+    {
         _isModalVisible = isVisible;
-        if (!_isModalVisible) {
+        if (!_isModalVisible)
+        {
             _livroParaEdicao = null;
         }
     }
 
-    private void EditLivro(int id) {
+    private void EditLivro(int id)
+    {
         var funcionario = _livros?.FirstOrDefault(f => f.Id == id);
-        if (funcionario != null) {
+        if (funcionario != null)
+        {
             _livroParaEdicao = funcionario;
             _isModalVisible = true;
             StateHasChanged();

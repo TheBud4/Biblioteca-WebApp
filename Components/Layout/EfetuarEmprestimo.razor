@@ -1,0 +1,89 @@
+@using Biblioteca.DataBase.Services
+@using Biblioteca.Models
+@using Microsoft.AspNetCore.Components
+
+@inject ILoanService LoanService
+
+<EditForm Model="@Emprestimo" class="custom-form" FormName="book-form" OnValidSubmit="HandleLend">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="row mt-3">
+        <div class="col form-group">
+            <label for="titulo">Id do livro</label>
+            <InputNumber id="titulo" class="form-control" @bind-Value="Emprestimo.Livro.Id" />
+        </div>
+        <div class="col form-group">
+            <label for="autor">Data de Retorno</label>
+            <InputDate id="autor" class="form-control" @bind-Value="Emprestimo.DataRetorno" />
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col form-group">
+            <label for="categoria">Nome do Cliente</label>
+            <InputText id="categoria" class="form-control" @bind-Value="Emprestimo.Cliente.Nome" />
+        </div>
+        </div>
+    <button type="submit" class="btn btn-primary mt-4">Emprestar</button>
+</EditForm>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            @if (IsSuccessfull)
+            {
+                <span class='bi bi-check-circle-fill me-2 text-success'></span>
+            }
+            else
+            {
+                <span class='bi bi-x-circle-fill me-2 text-danger'> </span>
+            }
+
+            <strong class="me-auto">Biblioteca</strong>
+            <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            @(IsSuccessfull ? "Livro Emprestado com sucesso!" : "Erro ao Emprestar Livro!")
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private Emprestimo? Emprestimo { get; set; } = new Emprestimo
+        {
+            Livro = new Livro(),
+            Cliente = new Cliente()
+        };
+
+    public bool Toast { get; private set; }
+    public bool IsSuccessfull { get; private set; }
+
+    private async Task HandleLend()
+    {
+        if (Emprestimo == null || Emprestimo.Cliente.Nome == null || Emprestimo.Livro.Id == 0)
+        {
+            IsSuccessfull = false;
+            ShowToast();
+            return;
+        }
+
+        var success = await LoanService.LendBook(Emprestimo);
+
+        IsSuccessfull = success;
+        ShowToast();
+    }
+
+
+    private void ShowToast()
+    {
+        Toast = true;
+        StateHasChanged();
+    }
+
+    private void HideToast()
+    {
+        Toast = false;
+        StateHasChanged();
+    }
+
+}

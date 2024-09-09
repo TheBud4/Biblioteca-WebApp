@@ -15,6 +15,7 @@ builder.Services.AddDbContext<BibliotecaDbContext>(options =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ILoanService, LoanService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

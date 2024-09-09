@@ -1,6 +1,162 @@
-@page "/biblioteca/emprestimos"
-<h3>Emprestimo</h3>
+    @page "/biblioteca/emprestimos"
+    @using Biblioteca.Models
+    @using Biblioteca_WebApp.Components.Layout
+    @inject ILoanService LoanService
+    <h3>Emprestimo</h3>
 
-@code {
+    <div class="mb-5">
+        <div class="row">
+            <div class="col-10 text-center mb-4">
+                <div class="input-group flex-nowrap">
+                    <span class="input-group-text text-center text-black" id="addon-wrapping">
+                        <span class="bi bi-search"></span>
+                    </span>
+                    <input type="search" class="form-control" @bind="SearchTerm" placeholder="Pesquise aqui..."
+                        @oninput="OnSearchChanged">
+                    <button class="btn btn-primary" @onclick="Search">Pesquisar</button>
+                </div>
+            </div>
+        </div>
 
-}
+        <div class="body">
+            @if (_emprestimos == null)
+            {
+                <p>Carregando Emprestimos...</p>
+            }
+            else if (_emprestimos.Count == 0)
+            {
+                <p>Nenhum Emprestimo encontrado.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Data do Emprestimo</th>
+                            <th>Data de Retorno</th>
+                            <th>Titulo do Livro</th>
+                            <th>Nome do Cliente</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var emprestimo in _emprestimos)
+                        {
+                            <tr>
+                                <td>@emprestimo.Id</td>
+                                <td>@emprestimo.DataEmprestimo</td>
+                                <td>@emprestimo.DataRetorno</td>
+                                <td>
+                                    @emprestimo.Livro?.Titulo
+                                </td>
+                                <td>@emprestimo.Cliente?.Nome</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" @onclick="() => EditEmprestimo(emprestimo.Id)">
+                                        Editar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span class="bi bi-x-circle-fill me-2 text-danger"> </span>
+                <strong class="me-auto">Biblioteca</strong>
+                <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Erro ao Emprestar Livro!
+            </div>
+        </div>
+    </div>
+    <button class="cadastrar-button btn btn-primary" @onclick="Show">Emprestar
+        Livro</button>
+    <Biblioteca_WebApp.Components.Layout.Edit.EditEmprestimo EmprestimoParaEdicao="_emprestimoParaEdicao" IsVisible="@_isModalVisible"
+        IsVisibleChanged="OnModalVisibilityChanged" />
+
+    <div class="@(IsCreateVisible ? "visible" : "hidden")">
+        <EfetuarEmprestimo />
+        <button @onclick="Hide" class="btn btn-outline-danger mt-4">Fechar</button>
+    </div>
+    @code {
+        private List<Emprestimo>? _emprestimos;
+        private Emprestimo? _emprestimoParaEdicao;
+        private bool _isModalVisible = false;
+
+        public bool IsCreateVisible { get; private set; }
+
+        public bool Toast { get; private set; }
+        private string? SearchTerm { get; set; } = string.Empty;
+
+        protected override async Task OnInitializedAsync()
+        {
+            await LoadUsuarios();
+        }
+
+        private async Task LoadUsuarios()
+        {
+            _emprestimos = await LoanService.GetLoans(SearchTerm);
+        }
+        private async Task Search()
+        {
+            await LoadUsuarios();
+        }
+
+        private async Task OnSearchChanged(ChangeEventArgs e)
+        {
+            SearchTerm = e.Value?.ToString();
+            await LoadUsuarios();
+        }
+
+        private void ShowToast()
+        {
+            Toast = true;
+            StateHasChanged();
+        }
+
+        private void HideToast()
+        {
+            Toast = false;
+            StateHasChanged();
+        }
+
+        private void OnModalVisibilityChanged(bool isVisible)
+        {
+            _isModalVisible = isVisible;
+            if (!_isModalVisible)
+            {
+                _emprestimoParaEdicao = null;
+            }
+        }
+
+        private void EditEmprestimo(Guid id)
+        {
+            var emprestimo = _emprestimos?.FirstOrDefault(f => f.Id == id);
+            if (emprestimo != null)
+            {
+                _emprestimoParaEdicao = emprestimo;
+                _isModalVisible = true;
+                StateHasChanged();
+            }
+        }
+        public void Show()
+        {
+            IsCreateVisible = true;
+            StateHasChanged();
+        }
+
+        public void Hide()
+        {
+            IsCreateVisible = false;
+            StateHasChanged();
+        }
+
+
+    }

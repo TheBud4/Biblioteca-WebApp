@@ -1,7 +1,7 @@
-@using Biblioteca.DataBase.Services
 @using Biblioteca.Models
+@using Biblioteca_WebApp.Components.Layout.Edit
+@using Biblioteca.DataBase.Services
 @inject IUserService UserService
-
 <div class="mb-5">
     <div class="row">
         <div class="col-10 text-center mb-4">
@@ -74,7 +74,7 @@
                                     </td>
                                     <td>
                                         <button class="btn btn-warning btn-sm"
-                                            @onclick="() => EditUser(funcionario.Id)">Editar</button>
+                                            @onclick="() => EditFuncionario(funcionario.Id,funcionario.TipoUsuario)">Editar</button>
                                     </td>
                                 </tr>
                             }
@@ -121,7 +121,8 @@
                                         , @cliente.Endereco?.Bairro, @cliente.Endereco?.CEP
                                     </td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" @onclick="() => EditUser(cliente.Id)">Editar</button>
+                                        <button class="btn btn-warning btn-sm"
+                                            @onclick="() => EditCliente(cliente.Id,cliente.TipoUsuario)">Editar</button>
                                     </td>
                                 </tr>
                             }
@@ -168,7 +169,15 @@
                                         ,@usuario.Endereco?.Bairro, @usuario.Endereco?.CEP
                                     </td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" @onclick="() => EditUser(usuario.Id)">Editar</button>
+                                        <button class="btn btn-warning btn-sm" @onclick="() => {
+                                                if(usuario.TipoUsuario == TipoUsuario.Cliente.ToString())
+                                                {
+                                                    EditCliente(usuario.Id,usuario.TipoUsuario);
+                                                }
+                                                else
+                                                {
+                                                    EditFuncionario(usuario.Id,usuario.TipoUsuario);
+                                                }}">Editar</button>
                                     </td>
                                 </tr>
                             }
@@ -183,12 +192,7 @@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
-
-
-
             <span class='bi bi-x-circle-fill me-2 text-danger'> </span>
-
-
             <strong class="me-auto">Biblioteca</strong>
             <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
         </div>
@@ -198,11 +202,20 @@
     </div>
 </div>
 
+
+<EditCliente ClienteParaEdicao="_clienteParaEdicao" IsVisible="@isModalVisible"
+    IsVisibleChanged="OnModalVisibilityChanged" />
+
+<EditFuncionario FuncionarioParaEdicao="_funcionarioParaEdicao" IsVisible="@isModalVisible"
+    IsVisibleChanged="OnModalVisibilityChanged" />
+
 @code {
     private List<Funcionario>? _funcionarios;
     private List<Cliente>? _clientes;
     private List<Usuario>? _usuarios;
-    private Usuario? _usuarioParaEdicao;
+    private Cliente? _clienteParaEdicao;
+    private Funcionario? _funcionarioParaEdicao;
+    private bool isModalVisible = false;
 
     public bool Toast { get; private set; }
 
@@ -264,54 +277,40 @@
         StateHasChanged();
     }
 
-
-    private void EditUser(Guid id)
+    private void OnModalVisibilityChanged(bool isVisible)
     {
-        if (SelectedTipoUsuario == TipoUsuario.Funcionario)
+        isModalVisible = isVisible;
+        if (!isModalVisible)
         {
-            var funcionario = _funcionarios?.FirstOrDefault(f => f.Id == id);
-            if (funcionario != null)
-            {
-                _usuarioParaEdicao = funcionario as Usuario;
-                Console.WriteLine("Funcionário para edição: " + _usuarioParaEdicao);
-                // Navegar para a página de edição ou abrir um modal
-                //NavigationManager.NavigateTo($"/edit-funcionario/{id}");
-            }
-            else
-            {
-                ShowToast();
-            }
+            _clienteParaEdicao = null;
         }
-        else if (SelectedTipoUsuario == TipoUsuario.Cliente)
+    }
+
+
+    private void EditCliente(Guid id, string tipo)
+    {
+
+        var cliente = _clientes?.FirstOrDefault(c => c.Id == id);
+        if (cliente != null)
         {
-            var cliente = _clientes?.FirstOrDefault(c => c.Id == id);
-            if (cliente != null)
-            {
-                _usuarioParaEdicao = cliente as Usuario;
-                Console.WriteLine("Cliente para edição: " + _usuarioParaEdicao);
-                // Navegar para a página de edição ou abrir um modal
-                //NavigationManager.NavigateTo($"/edit-cliente/{id}");
-            }
-            else
-            {
-                ShowToast();
-            }
+            _clienteParaEdicao = cliente;
+            isModalVisible = true;
+            StateHasChanged();
         }
-        else
+
+    }
+
+    private void EditFuncionario(Guid id, string tipo)
+    {
+
+        var funcionario = _funcionarios?.FirstOrDefault(f => f.Id == id);
+        if (funcionario != null)
         {
-            var usuario = _usuarios?.FirstOrDefault(u => u.Id == id);
-            if (usuario != null)
-            {
-                _usuarioParaEdicao = usuario;
-                Console.WriteLine("Usuário para edição: " + _usuarioParaEdicao);
-                // Navegar para a página de edição ou abrir um modal
-                //NavigationManager.NavigateTo($"/edit-usuario/{id}");
-            }
-            else
-            {
-                ShowToast();
-            }
+            _funcionarioParaEdicao = funcionario;
+            isModalVisible = true;
+            StateHasChanged();
         }
+
     }
 
 }

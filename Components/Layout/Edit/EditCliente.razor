@@ -1,0 +1,110 @@
+@using Biblioteca.Models
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Biblioteca.DataBase.Services
+
+@inject IUserService UserService
+
+<div class="modal fade @(IsVisible ? "show d-block" : "d-none")" tabindex="-1"
+    style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Usuário</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (ClienteParaEdicao != null && ClienteParaEdicao.Endereco != null)
+                {
+                    <EditForm Model="ClienteParaEdicao" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <InputText id="nome" class="form-control" @bind-Value="ClienteParaEdicao.Nome" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <InputText id="email" class="form-control" @bind-Value="ClienteParaEdicao.Email" />
+                        </div>
+
+                        <h3>Endereço</h3>
+
+                        <div class="mb-3">
+                            <label for="rua" class="form-label">Rua</label>
+                            <InputText id="rua" class="form-control" @bind-Value="ClienteParaEdicao.Endereco.Rua" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="numero" class="form-label">Número</label>
+                            <InputText id="numero" class="form-control" @bind-Value="ClienteParaEdicao.Endereco.Numero" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bairro" class="form-label">Bairro</label>
+                            <InputText id="bairro" class="form-control" @bind-Value="ClienteParaEdicao.Endereco.Bairro" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cep" class="form-label">CEP</label>
+                            <InputText id="cep" class="form-control" @bind-Value="ClienteParaEdicao.Endereco.CEP" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="cep" class="form-label">Complemento</label>
+                            <InputText id="cep" class="form-control" @bind-Value="ClienteParaEdicao.Endereco.Complemento" />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" @onclick="Excluir">Excluir</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    <p>Carregando...</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Cliente? ClienteParaEdicao { get; set; }
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (ClienteParaEdicao != null && ClienteParaEdicao.Endereco == null)
+        {
+            ClienteParaEdicao.Endereco = new Endereco();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (ClienteParaEdicao != null)
+        {
+            await UserService.EditCliente(ClienteParaEdicao.Id, ClienteParaEdicao);
+            await CloseModal();
+        }
+    }
+
+    private async Task CloseModal()
+    {
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(IsVisible);
+    }
+
+    private async Task Excluir()
+    {
+        if (ClienteParaEdicao != null)
+        {
+            await UserService.ExcluirUsuario(ClienteParaEdicao.Id);
+            await CloseModal();
+        }
+    }
+}

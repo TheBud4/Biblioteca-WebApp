@@ -3,10 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.DataBase;
 
-public class BibliotecaDbContext : DbContext
-{
-    public BibliotecaDbContext(DbContextOptions<BibliotecaDbContext> options) : base(options)
-    {
+public class BibliotecaDbContext : DbContext {
+    public BibliotecaDbContext(DbContextOptions<BibliotecaDbContext> options) : base(options) {
     }
 
     public DbSet<Autor> Autores { get; set; }
@@ -18,9 +16,7 @@ public class BibliotecaDbContext : DbContext
     public DbSet<Funcionario> Funcionarios { get; set; }
     public DbSet<Endereco> Enderecos { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
         // Configura o discriminador para a hierarquia de Usuario
         modelBuilder.Entity<Usuario>()
             .HasDiscriminator<string>("TipoUsuario")

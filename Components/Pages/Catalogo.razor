@@ -1,6 +1,155 @@
+@using Biblioteca.Models
+@using Biblioteca_WebApp.Components.Layout
+@using Biblioteca_WebApp.Components.Layout.Edit
+@using Biblioteca.DataBase.Services
+@inject IBookService BookService
+
 @page "/biblioteca/catalogo"
 <h3>Catalogo</h3>
 
+
+<div class="mb-5">
+    <div class="row">
+        <div class="col-10 text-center mb-4">
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text text-center text-black" id="addon-wrapping">
+                    <span class="bi bi-search"></span>
+                </span>
+                <input type="search" class="form-control" @bind="SearchTerm" placeholder="Pesquise aqui..."
+                       @oninput="OnSearchChanged">
+                <button class="btn btn-primary" @onclick="Search">Pesquisar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="body">
+                @if (_livros == null) {
+                    <p>Carregando Livros...</p>
+                }
+                else if (_livros.Count == 0) {
+                    <p>Nenhum Livro encontrado.</p>
+                }
+                else {
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Titulo</th>
+                            <th>Data de Publicacao</th>
+                            <th>Autor</th>
+                            <th>Categoria</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var livro in _livros) {
+                            <tr>
+                                <td>@livro.Id</td>
+                                <td>@livro.Titulo</td>
+                            <td>@livro.PublishedDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @livro.Autor?.Nome
+                                </td>
+                                <td>@livro.Categoria?.Nome</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm"
+                                            @onclick="() => EditLivro(livro.Id)">
+                                        Editar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+    </div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <span class="bi bi-x-circle-fill me-2 text-danger"> </span>
+            <strong class="me-auto">Biblioteca</strong>
+            <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Erro ao cadastrar Livro!
+        </div>
+    </div>
+</div>
+<button class="cadastrar-button btn btn-primary" @onclick="Show">Cadastrar
+    Livros</button>
+<EditLivro LivroParaEdicao="_livroParaEdicao" IsVisible="@_isModalVisible"
+                 IsVisibleChanged="OnModalVisibilityChanged"/>
+
+
+
+<div class="@(IsCreateVisible ? "visible" : "hidden")">
+    <CadastrarLivro/>
+    <button @onclick="Hide" class="btn btn-outline-danger mt-4">Fechar</button>
+</div>
 @code {
-    
+    private List<Livro>? _livros;
+    private Livro? _livroParaEdicao;
+    private bool _isModalVisible = false;
+
+    public bool IsCreateVisible { get; private set; }
+
+    public bool Toast { get; private set; }
+    private string? SearchTerm { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync() {
+        await LoadUsuarios();
+    }
+
+    private async Task LoadUsuarios() {
+            _livros = await BookService.GetBooks(SearchTerm);
+    }
+    private async Task Search() {
+        await LoadUsuarios();
+    }
+
+    private async Task OnSearchChanged(ChangeEventArgs e) {
+        SearchTerm = e.Value?.ToString();
+        await LoadUsuarios();
+    }
+
+    private void ShowToast() {
+        Toast = true;
+        StateHasChanged();
+    }
+
+    private void HideToast() {
+        Toast = false;
+        StateHasChanged();
+    }
+
+    private void OnModalVisibilityChanged(bool isVisible) {
+        _isModalVisible = isVisible;
+        if (!_isModalVisible) {
+            _livroParaEdicao = null;
+        }
+    }
+
+    private void EditLivro(int id) {
+        var funcionario = _livros?.FirstOrDefault(f => f.Id == id);
+        if (funcionario != null) {
+            _livroParaEdicao = funcionario;
+            _isModalVisible = true;
+            StateHasChanged();
+        }
+    }
+    public void Show()
+    {
+        IsCreateVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        IsCreateVisible = false;
+        StateHasChanged();
+    }
+
+
 }

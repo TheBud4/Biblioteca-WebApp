@@ -3,30 +3,21 @@
 @inject IUserService UserService
 <div class="gerenciador">
     <h3>Gerenciar Usuarios</h3>
-    <ListarUsuarios />
-    <button class="cadastrar-button btn btn-primary" @onclick="()=>{
-    Show();
-    IsFuncionarioVisible = false;
-    }">Cadastrar Clientes</button>
-    <button class="cadastrar-button btn btn-primary" @onclick="()=>{
-    Show();
-    IsFuncionarioVisible = true;
-    }">Cadastrar Funcionários</button>
+    <ListarUsuarios/>
+    <button class="cadastrar-button btn btn-primary" @onclick="() => { Show(); IsFuncionarioVisible = false; }">Cadastrar Clientes</button>
+    <button class="cadastrar-button btn btn-primary" @onclick="() => { Show(); IsFuncionarioVisible = true; }">Cadastrar Funcionários</button>
 
 </div>
 
 
-
 <div class="@(IsVisible ? "visible" : "hidden")">
-    @if (IsFuncionarioVisible)
-    {
+    @if (IsFuncionarioVisible) {
         <h1> Cadastrar Funcionários</h1>
-        <CadastrarFuncionario />
+        <CadastrarFuncionario/>
     }
-    else
-    {
+    else {
         <h1> Cadastrar Clientes</h1>
-        <CadastrarCliente />
+        <CadastrarCliente/>
     }
     <button @onclick="Hide" class="btn btn-outline-danger mt-4">Fechar</button>
 </div>
@@ -41,14 +32,13 @@
     private bool IsFuncionarioVisible = false;
 
     public bool IsVisible { get; private set; }
-    public void Show()
-    {
+
+    public void Show() {
         IsVisible = true;
         StateHasChanged();
     }
 
-    public void Hide()
-    {
+    public void Hide() {
         IsVisible = false;
         StateHasChanged();
     }

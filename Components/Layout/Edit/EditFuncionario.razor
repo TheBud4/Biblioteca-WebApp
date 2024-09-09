@@ -6,7 +6,7 @@
 @inject IUserService UserService
 
 <div class="modal fade @(IsVisible ? "show d-block" : "d-none")" tabindex="-1"
-    style="background-color: rgba(0, 0, 0, 0.5);">
+     style="background-color: rgba(0, 0, 0, 0.5);">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -14,46 +14,45 @@
                 <button type="button" class="btn-close" @onclick="CloseModal"></button>
             </div>
             <div class="modal-body">
-                @if (FuncionarioParaEdicao != null && FuncionarioParaEdicao.Endereco != null)
-                {
+                @if (FuncionarioParaEdicao != null && FuncionarioParaEdicao.Endereco != null) {
                     <EditForm Model="FuncionarioParaEdicao" OnValidSubmit="HandleValidSubmit">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary/>
 
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
-                            <InputText id="nome" class="form-control" @bind-Value="FuncionarioParaEdicao.Nome" />
+                            <InputText id="nome" class="form-control" @bind-Value="FuncionarioParaEdicao.Nome"/>
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <InputText id="email" class="form-control" @bind-Value="FuncionarioParaEdicao.Email" />
+                            <InputText id="email" class="form-control" @bind-Value="FuncionarioParaEdicao.Email"/>
                         </div>
 
                         <h3>Endereço</h3>
 
                         <div class="mb-3">
                             <label for="rua" class="form-label">Rua</label>
-                            <InputText id="rua" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Rua" />
+                            <InputText id="rua" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Rua"/>
                         </div>
 
                         <div class="mb-3">
                             <label for="numero" class="form-label">Número</label>
-                            <InputText id="numero" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Numero" />
+                            <InputText id="numero" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Numero"/>
                         </div>
 
                         <div class="mb-3">
                             <label for="bairro" class="form-label">Bairro</label>
-                            <InputText id="bairro" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Bairro" />
+                            <InputText id="bairro" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Bairro"/>
                         </div>
 
                         <div class="mb-3">
                             <label for="cep" class="form-label">CEP</label>
-                            <InputText id="cep" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.CEP" />
+                            <InputText id="cep" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.CEP"/>
                         </div>
                         <div class="mb-3">
                             <label for="cep" class="form-label">Complemento</label>
-                            <InputText id="cep" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Complemento" />
+                            <InputText id="cep" class="form-control" @bind-Value="FuncionarioParaEdicao.Endereco.Complemento"/>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-danger" @onclick="Excluir">Excluir</button>
@@ -62,8 +61,7 @@
                         </div>
                     </EditForm>
                 }
-                else
-                {
+                else {
                     <p>Carregando...</p>
                 }
             </div>
@@ -76,35 +74,29 @@
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
-    protected override void OnParametersSet()
-    {
-        if (FuncionarioParaEdicao != null && FuncionarioParaEdicao.Endereco == null)
-        {
+    protected override void OnParametersSet() {
+        if (FuncionarioParaEdicao != null && FuncionarioParaEdicao.Endereco == null) {
             FuncionarioParaEdicao.Endereco = new Endereco();
         }
     }
 
-    private async Task HandleValidSubmit()
-    {
-        if (FuncionarioParaEdicao != null)
-        {
+    private async Task HandleValidSubmit() {
+        if (FuncionarioParaEdicao != null) {
             await UserService.EditFuncionario(FuncionarioParaEdicao.Id, FuncionarioParaEdicao);
             await CloseModal();
         }
     }
 
-    private async Task CloseModal()
-    {
+    private async Task CloseModal() {
         IsVisible = false;
         await IsVisibleChanged.InvokeAsync(IsVisible);
     }
 
-    private async Task Excluir()
-    {
-        if (FuncionarioParaEdicao != null)
-        {
+    private async Task Excluir() {
+        if (FuncionarioParaEdicao != null) {
             await UserService.ExcluirUsuario(FuncionarioParaEdicao.Id);
             await CloseModal();
         }
     }
+
 }

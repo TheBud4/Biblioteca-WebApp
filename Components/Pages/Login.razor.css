@@ -1,4 +1,4 @@
-.container{
+.container {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -6,12 +6,13 @@
     justify-content: center;
     margin-top: 10vh;
 }
-.container h1{
+
+.container h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
 }
 
-::deep .custom-form{
+::deep .custom-form {
     display: flex;
     gap: 3rem;
     flex-direction: column;
@@ -20,13 +21,15 @@
     box-shadow: grey 0px 0px 5px;
     padding: 2rem;
 }
-::deep .form-fields{
+
+::deep .form-fields {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
 }
-::deep .form-fields Input{
+
+::deep .form-fields Input {
     width: 100%;
     box-shadow: grey 0px 0px 5px;
     padding: 0.5rem;

@@ -1,20 +1,23 @@
-.page{
+.page {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 10vh;
 }
-.page h1{
+
+.page h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
 }
-.page main{
+
+.page main {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.page a{
+
+.page a {
     margin-top: 1rem;
     padding: 0.5rem 3rem;
     font-size: 1.5rem;
@@ -25,6 +28,7 @@
     color: white;
     cursor: pointer;
 }
-.page a:hover{
+
+.page a:hover {
     background-color: #0056b3;
 }   

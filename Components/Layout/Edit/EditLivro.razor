@@ -1,0 +1,88 @@
+@using Biblioteca.Models
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Biblioteca.DataBase.Services
+
+@inject IBookService BookService
+
+<div class="modal fade @(IsVisible ? "show d-block" : "d-none")" tabindex="-1"
+     style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Usuário</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (LivroParaEdicao != null && LivroParaEdicao.Autor != null && LivroParaEdicao.Categoria != null) {
+                    <EditForm Model="LivroParaEdicao" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary/>
+
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Titulo</label>
+                            <InputText id="titulo" class="form-control" @bind-Value="LivroParaEdicao.Titulo"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="autor" class="form-label">Autor</label>
+                            <InputText id="autor" class="form-control" @bind-Value="LivroParaEdicao.Autor.Nome"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <InputText id="categoria" class="form-control" @bind-Value="LivroParaEdicao.Categoria.Nome" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="data" class="form-label">Data de Publicação</label>
+                            <InputDate id="data" class="form-control" @bind-Value="LivroParaEdicao.PublishedDate" />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" @onclick="Excluir">Excluir</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </EditForm>
+                }
+                else {
+                    <p>Carregando...</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Livro? LivroParaEdicao { get; set; }
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    protected override void OnParametersSet() {
+        if (LivroParaEdicao != null && LivroParaEdicao.Autor == null) {
+            LivroParaEdicao.Autor = new Autor();
+        }
+        if (LivroParaEdicao != null && LivroParaEdicao.Categoria == null)
+        {
+            LivroParaEdicao.Categoria = new Categoria();
+        }
+    }
+
+    private async Task HandleValidSubmit() {
+        if (LivroParaEdicao != null) {
+            await BookService.UpdateBook(LivroParaEdicao);
+            await CloseModal();
+        }
+    }
+
+    private async Task CloseModal() {
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(IsVisible);
+    }
+
+    private async Task Excluir() {
+        if (LivroParaEdicao != null) {
+            await BookService.DeleteBook(LivroParaEdicao.Id);
+            await CloseModal();
+        }
+    }
+
+}

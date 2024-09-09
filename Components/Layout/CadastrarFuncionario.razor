@@ -5,49 +5,49 @@
 
 
 <EditForm Model="@Funcionario" class="custom-form" FormName="login-form" OnValidSubmit="HandleRegister">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
     <div class="row">
         <div class="col form-group">
             <label for="nome">Nome</label>
-            <InputText id="nome" class="form-control" @bind-Value="Funcionario.Nome" />
+            <InputText id="nome" class="form-control" @bind-Value="Funcionario.Nome"/>
         </div>
         <div class="col form-group">
             <label for="nome">Email</label>
-            <InputText id="nome" class="form-control" @bind-Value="Funcionario.Email" />
+            <InputText id="nome" class="form-control" @bind-Value="Funcionario.Email"/>
         </div>
     </div>
     <div class="form-group mt-3">
         <label for="nome">Senha</label>
-        <InputText id="nome" type="password" class="form-control" @bind-Value="Funcionario.Senha" />
+        <InputText id="nome" type="password" class="form-control" @bind-Value="Funcionario.Senha"/>
     </div>
     <div class="row mt-3">
         <div class="col form-group">
             <label for="nome">CEP</label>
-            <InputText id="nome" class="form-control" @bind-Value="Endereco.CEP" />
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.CEP"/>
         </div>
         <div class="col form-group">
             <label for="nome">Bairro</label>
-            <InputText id="nome" class="form-control" @bind-Value="Endereco.Bairro" />
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Bairro"/>
         </div>
         <div class="col form-group">
             <label for="nome">Rua</label>
-            <InputText id="nome" class="form-control" @bind-Value="Endereco.Rua" />
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Rua"/>
         </div>
     </div>
     <div class="row mt-3">
         <div class="col form-group">
             <label for="nome">Numero</label>
-            <InputText id="nome" class="form-control" @bind-Value="Endereco.Numero" />
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Numero"/>
         </div>
         <div class="col form-group">
             <label for="nome">Complemento</label>
-            <InputText id="nome" class="form-control" @bind-Value="Endereco.Complemento" />
+            <InputText id="nome" class="form-control" @bind-Value="Endereco.Complemento"/>
         </div>
     </div>
     <div class="form-group w-20 col col-2">
         <label for="nome">Salario</label>
-        <InputNumber id="nome" class="form-control" @bind-Value="Funcionario.Salario" />
+        <InputNumber id="nome" class="form-control" @bind-Value="Funcionario.Salario"/>
     </div>
     <button type="submit" class="btn btn-primary mt-4">Cadastrar</button>
 </EditForm>
@@ -55,12 +55,10 @@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div class="toast @(Toast ? "show" : "")" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
-            @if (IsSuccessfull)
-            {
+            @if (IsSuccessfull) {
                 <span class='bi bi-check-circle-fill me-2 text-success'></span>
             }
-            else
-            {
+            else {
                 <span class='bi bi-x-circle-fill me-2 text-danger'> </span>
             }
 
@@ -68,12 +66,10 @@
             <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
-            @(IsSuccessfull ? "Funcionario Cadastrado com sucesso!" :
-                "Erro ao cadastrar funcionario!")
+            @(IsSuccessfull ? "Funcionario Cadastrado com sucesso!" : "Erro ao cadastrar funcionario!")
         </div>
     </div>
 </div>
-
 
 
 @code {
@@ -83,30 +79,25 @@
     public bool Toast { get; private set; }
     public bool IsSuccessfull { get; private set; }
 
-    private async Task HandleRegister()
-    {
+    private async Task HandleRegister() {
         var success = await UserService.RegisterFuncionario(Funcionario, Endereco);
 
-        if (success)
-        {
+        if (success) {
             IsSuccessfull = true;
             ShowToast();
-
         }
-        else
-        {
+        else {
             IsSuccessfull = false;
             ShowToast();
         }
     }
-    private void ShowToast()
-    {
+
+    private void ShowToast() {
         Toast = true;
         StateHasChanged();
     }
 
-    private void HideToast()
-    {
+    private void HideToast() {
         Toast = false;
         StateHasChanged();
     }

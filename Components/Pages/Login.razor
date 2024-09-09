@@ -22,14 +22,13 @@
         <button class="btn btn-primary w-25 fs-5" type="submit">Login</button>
     </EditForm>
 </div>
+
 @code {
-    [SupplyParameterFromForm]
-    
-    private Usuario Usuario { get; set; } = new();
+    [SupplyParameterFromForm] private Usuario Usuario { get; set; } = new();
 
     private async Task HandleLogin() {
         var success = await UserService.Login(Usuario.Nome, Usuario.Senha);
-        
+
         if (success) {
             Navigation.NavigateTo("/Painel-de-controle");
         }
